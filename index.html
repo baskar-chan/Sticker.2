@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ابزار کراپ عکس با کادر متحرک</title>
+  <title>Bot</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -26,6 +26,8 @@
       min-height: 100vh;
       padding: 20px;
       color: #5a2a40;
+      position: relative;
+      overflow-x: hidden;
     }
     
     .container {
@@ -34,6 +36,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      z-index: 2;
     }
     
     h1 {
@@ -300,11 +304,25 @@
       font-size: 1.2rem;
     }
     
-    .gif-container {
+    .gif-background {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
       text-align: center;
-      margin: 20px auto;
+      z-index: 1;
+      padding: 20px 0;
+      background: linear-gradient(to top, rgba(255,230,240,0.9), rgba(255,230,240,0.5));
+      pointer-events: none;
+    }
+    
+    .gif-container {
+      display: inline-block;
       cursor: pointer;
       transition: transform 0.3s ease;
+      pointer-events: auto;
+      max-width: 80%;
     }
     
     .gif-container:hover {
@@ -312,9 +330,10 @@
     }
     
     .gif-image {
-      max-width: 200px;
+      max-width: 400px;
+      width: 100%;
       border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(216, 51, 108, 0.15);
+      box-shadow: 0 8px 25px rgba(216, 51, 108, 0.3);
     }
     
     @media (max-width: 768px) {
@@ -346,7 +365,7 @@
       }
       
       .gif-image {
-        max-width: 150px;
+        max-width: 300px;
       }
       
       .result-title {
@@ -394,16 +413,26 @@
       }
       
       .gif-image {
-        max-width: 120px;
+        max-width: 250px;
       }
       
       .result-title {
         font-size: 1rem;
       }
+      
+      .gif-background {
+        padding: 10px 0;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="gif-background">
+    <div class="gif-container">
+      <img id="animated-gif" class="gif-image" src="https://abrehamrahi.ir/o/public/IYhObXVy/" alt="Gif متحرک">
+    </div>
+  </div>
+  
   <div class="container">
     <h1>عکس‌هاتو استیکر کن</h1>
     
@@ -432,10 +461,6 @@
       <div class="sticker-container">
         <img id="random-sticker" class="sticker-image" src="" alt="استیکر تصادفی">
         <h2 class="result-title">درستش کردیم... وردار ببرش هر جا خواستی</h2>
-      </div>
-      
-      <div class="gif-container">
-        <img id="animated-gif" class="gif-image" src="https://abrehamrahi.ir/o/public/IYhObXVy/" alt="Gif متحرک">
       </div>
       
       <div class="upload-area">
@@ -473,12 +498,16 @@
     const fileInput = document.getElementById('image-upload');
     const randomSticker = document.getElementById('random-sticker');
     const animatedGif = document.getElementById('animated-gif');
+    const gifContainer = document.querySelector('.gif-container');
     
     // لیست استیکرهای تصادفی
     const stickers = [
       'https://abrehamrahi.ir/o/public/Cnfb2z19/',
       'https://abrehamrahi.ir/o/public/qGMzFQEd/'
     ];
+    
+    // ابتدا GIF را مخفی می‌کنیم
+    document.querySelector('.gif-background').style.display = 'none';
     
     fileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -554,6 +583,9 @@
       step1.style.display = 'none';
       step2.style.display = 'block';
       
+      // نمایش GIF در پس‌زمینه
+      document.querySelector('.gif-background').style.display = 'block';
+      
       // انتخاب تصادفی یک استیکر
       const randomStickerUrl = stickers[Math.floor(Math.random() * stickers.length)];
       randomSticker.src = randomStickerUrl;
@@ -570,6 +602,7 @@
       sourceImage.style.display = 'none';
       randomSticker.style.display = 'none';
       cropBtn.disabled = true;
+      document.querySelector('.gif-background').style.display = 'none';
       document.querySelector('.image-container').style.height = '400px';
       if (cropper) {
         cropper.destroy();
@@ -643,7 +676,7 @@
     });
     
     // اضافه کردن event listener برای کلیک روی GIF
-    animatedGif.addEventListener('click', function() {
+    gifContainer.addEventListener('click', function() {
       window.open('https://eitaa.com/joinchat/2943550360Cb207b62bed', '_blank');
     });
   </script>
